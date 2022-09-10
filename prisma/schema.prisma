@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id           String    @id @default(uuid())
+  name         String
+  defaultPrice Float
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Tariff       Tariff[]
+  RoomType     RoomType? @relation(fields: [roomTypeId], references: [id])
+  roomTypeId   String?
+}
+
+model RoomType {
+  id             String           @id @default(uuid())
+  name           String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  Room           Room[]
+  RoomTypeTariff RoomTypeTariff[]
+}
+
+model Tariff {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    String
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoomTypeTariff {
+  id         String   @id @default(uuid())
+  name       String
+  price      Float
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id])
+  roomTypeId String
+  date       DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
